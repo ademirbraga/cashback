@@ -1,6 +1,7 @@
 # coding=utf8
 from django.db import models
 from cpf_field.models import CPFField
+from settings import DEFAULT_STATUS_PEDIDO
 
 
 class Revendedor(models.Model):
@@ -46,11 +47,11 @@ class Pedido(models.Model):
         db_table = 'pedido'
         ordering = ['data']   
 
-    numero     = models.CharField(max_length=60, verbose_name=u'Número')
-    revendedor = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    status     = models.ForeignKey(Status, verbose_name=u'Status', related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    valor      = models.DecimalField(max_digits=10, decimal_places=6, verbose_name=u'Valor', null=True, blank=True)
-    data       = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=True, blank=True)
+    numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
+    revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    status        = models.ForeignKey(Status, verbose_name=u'Status', default=DEFAULT_STATUS_PEDIDO, related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    valor         = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor', null=False, blank=False)
+    data          = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=False, blank=False, auto_now_add=True)
 
     def __str__(self):
         return self.numero        
@@ -62,8 +63,8 @@ class Pedido(models.Model):
 
 class CashBack(models.Model):
     class Meta:
-        verbose_name = u'CashBack'
-        verbose_name_plural = u'CashBack'
+        verbose_name = u'Config. CashBack'
+        verbose_name_plural = u'Config. CashBack'
         db_table = 'cashback'
         ordering = ['percentual'] 
 
@@ -75,14 +76,19 @@ class CashBack(models.Model):
 class CashBackRevendedor(models.Model):
     class Meta:
         verbose_name = u'CashBack Revendedor'
-        verbose_name_plural = u'CashBack'
+        verbose_name_plural = u'CashBack Revendedores'
         db_table = 'cashback_revendedor'
         ordering = ['data']
+        unique_together = ['revendedor', 'pedido']
+        constraints = [
+            models.CheckConstraint(check=models.Q(perc_cashback__lte=20), name='perc_cashback_lte_20'),
+        ]
 
-    revendedor = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_cashback_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    pedido     = models.ForeignKey(Pedido, verbose_name=u'Pedido', related_name='cashback_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    valor      = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor CashBack', null=True, blank=True)
-    data       = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=True, blank=True)
+    revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_cashback_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    pedido        = models.ForeignKey(Pedido, verbose_name=u'Pedido', related_name='cashback_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    valor         = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor CashBack', null=True, blank=True)
+    data          = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=True, blank=True)
+    perc_cashback = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Perc. CashBack Aplicado', null=True, blank=True)
 
     def __str__(self):
         return str(self.revendedor)
