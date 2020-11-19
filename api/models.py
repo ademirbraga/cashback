@@ -1,7 +1,8 @@
 # coding=utf8
 from django.db import models
+from django.db.models import BooleanField
 from cpf_field.models import CPFField
-from settings import DEFAULT_STATUS_PEDIDO
+from settings import STATUS_EM_VALIDACAO
 
 
 class Revendedor(models.Model):
@@ -15,7 +16,7 @@ class Revendedor(models.Model):
     nome  = models.CharField(max_length=60, verbose_name=u'Nome')
     cpf   = CPFField('cpf', unique=True)
     email = models.EmailField(max_length=60, verbose_name=u'Email', unique=True)
-    senha = models.CharField(max_length=60, verbose_name=u'Senha')
+    senha = models.CharField(max_length=100, verbose_name=u'Senha')
 
     def __str__(self):
         return self.nome
@@ -23,6 +24,22 @@ class Revendedor(models.Model):
     def __unicode__(self):
         return u'%s' % (self.nome)
 
+
+class WhiteListPedido(models.Model):
+    class Meta:
+        verbose_name = u'White List Pedido'
+        verbose_name_plural = u'White List Pedido'
+        db_table = 'white_list_pedido' 
+        ordering = ['cpf']   
+
+    cpf   = CPFField('cpf', unique=True)
+    ativo = BooleanField(verbose_name=u'Ativo?', default=True, null=False, blank=False)
+
+    def __str__(self):
+        return self.cpf
+
+    def __unicode__(self):
+        return u'%s' % (self.cpf)
 
 class Status(models.Model):
     class Meta:
@@ -49,9 +66,9 @@ class Pedido(models.Model):
 
     numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
     revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    status        = models.ForeignKey(Status, verbose_name=u'Status', default=DEFAULT_STATUS_PEDIDO, related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    status        = models.ForeignKey(Status, verbose_name=u'Status', default=STATUS_EM_VALIDACAO, related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
     valor         = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor', null=False, blank=False)
-    data          = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=False, blank=False, auto_now_add=True)
+    data          = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=False, blank=False, auto_now_add=False)
 
     def __str__(self):
         return self.numero        
