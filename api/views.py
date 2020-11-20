@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework import permissions
+import json, requests
 
-
+from settings import CASHBACK_RETRIEVE_URL, CASHBACK_RETRIEVE_TOKEN
 from .serializers import RevendedorSerializer, PedidoSerializer, CashBackRevendedorSerializer, WhiteListPedidoSerializer
 from .models import Revendedor, Pedido, CashBackRevendedor, WhiteListPedido
 
@@ -35,7 +36,15 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
 class CashBackRevendedorViewSet(viewsets.ModelViewSet):
     queryset = CashBackRevendedor.objects.all().order_by('revendedor')
-    serializer_class = CashBackRevendedorSerializer    
+    serializer_class = CashBackRevendedorSerializer  
+
+    def cashback_acumulado(self, request, *args, **kwargs):
+        headers = {
+            'token': CASHBACK_RETRIEVE_TOKEN
+        }
+        url = '{}?cpf={}'.format(CASHBACK_RETRIEVE_URL, kwargs['cpf'])
+        response = requests.get(url, headers=headers)
+        return Response(json.loads(response.content))
 
 class WhiteListPedidoViewSet(viewsets.ModelViewSet):
     queryset = WhiteListPedido.objects.all().order_by('cpf')

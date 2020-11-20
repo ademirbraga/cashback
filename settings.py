@@ -131,3 +131,6 @@ STATUS_EM_VALIDACAO = 1
 STATUS_APROVADO = 2
 
 SALT='boticario'
+
+CASHBACK_RETRIEVE_URL='https://mdaqk8ek5j.execute-api.us-east-1.amazonaws.com/v1/cashback'
+CASHBACK_RETRIEVE_TOKEN='ZXPURQOARHiMc6Y0flhRC1LVlZQVFRnm'
