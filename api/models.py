@@ -57,12 +57,43 @@ class Status(models.Model):
         return u'%s' % (self.status)
 
 
+class PedidoQuerySet(models.QuerySet):
+    def listar_pedidos(self):
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                select
+                    p.numero,
+                    p.valor,
+                    p."data",
+                    cr.perc_cashback,
+                    cr.valor as valor_cashback,
+                    sp.status
+                from
+                    pedido p 
+                    inner join cashback_revendedor cr on cr.pedido_id = p.id
+                    inner join status_pedido sp on sp.id = p.status_id
+                """)
+            result_list = cursor.fetchall()
+        return result_list
+
+class PedidoManager(models.Manager):
+    def get_queryset(self):
+        return PedidoQuerySet(self.model, using=self._db)
+
+    def listar_pedidos(self):
+        return self.get_queryset().listar_pedidos()
+
+
 class Pedido(models.Model):
     class Meta:
         verbose_name = u'Pedido'
         verbose_name_plural = u'Pedidos'
         db_table = 'pedido'
         ordering = ['data']   
+    
+    # objects       = models.Manager()
+    # objects       = PedidoManager()
 
     numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
     revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
@@ -75,8 +106,6 @@ class Pedido(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.numero)
-
-
 
 class CashBack(models.Model):
     class Meta:

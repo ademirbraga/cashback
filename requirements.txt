@@ -1,1 +1,2 @@
 django-cpf
+django-print-sql

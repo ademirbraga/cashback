@@ -21,6 +21,16 @@ class RevendedorViewSet(viewsets.ModelViewSet):
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all().order_by('numero')
     serializer_class = PedidoSerializer
+    """
+    ViewSet para listar as compras cadastradas retornando:
+    código, valor, data, % de cashback aplicado para esta compra, 
+    valor de cashback para esta compra e status
+    """
+    def list(self, request, *args, **kwargs):
+        pedidos = Pedido.objects.listar_pedidos()
+        serializer = self.get_serializer(pedidos, many=True)
+        return Response(serializer.data)
+
 
 
 class CashBackRevendedorViewSet(viewsets.ModelViewSet):

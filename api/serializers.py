@@ -1,9 +1,12 @@
 # coding=utf8
-from rest_framework.serializers import ModelSerializer, CharField, DateTimeField, ValidationError
-from .models import Revendedor, Pedido, CashBackRevendedor, WhiteListPedido
+from decimal import Decimal
+from django.db import IntegrityError, transaction
+from rest_framework import status
+from django_print_sql import print_sql_decorator
+from rest_framework.serializers import ModelSerializer, CharField, DateTimeField, DecimalField, ValidationError
+from .models import Revendedor, Pedido, CashBackRevendedor, WhiteListPedido, CashBack
 from django.contrib.auth.hashers import make_password
 from settings import SALT, STATUS_EM_VALIDACAO, STATUS_APROVADO
-
 
 
 class WhiteListPedidoSerializer(ModelSerializer):
@@ -12,10 +15,25 @@ class WhiteListPedidoSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class CashBackSerializer(ModelSerializer):
+    class Meta:
+        model  = CashBack
+        fields = '__all__'
+
+    @print_sql_decorator(count_only=False) 
+    def get_cash_back(self, valor_pedido):
+        try:
+            cashback = CashBack.objects.get(valor_min__lte=valor_pedido, valor_max__gte=valor_pedido)
+            
+            serializer = CashBackSerializer(cashback)
+            return serializer.data
+        except CashBack.DoesNotExist:
+            raise ValidationError("Não foi encontrado percentual de cashback para o valor '%s' informado." % valor_pedido)
+
 class RevendedorSerializer(ModelSerializer):
     class Meta:
-        model  = Revendedor
-        fields = ('id', 'nome', 'cpf', 'email', 'senha')
+        model        = Revendedor
+        fields       = ('id', 'nome', 'cpf', 'email', 'senha')
         extra_kwargs = {'senha': {'write_only': True}}
 
     def create(self, validated_data):
@@ -38,7 +56,8 @@ class RevendedorSerializer(ModelSerializer):
 
 class PedidoSerializer(ModelSerializer):
     revendedor = CharField(source='revendedor.cpf')
-    data = DateTimeField(format='%Y-%m-%dT%H:%M:%S')
+    data       = DateTimeField(format='%Y-%m-%dT%H:%M:%S')
+    valor      = DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         model  = Pedido
@@ -50,11 +69,9 @@ class PedidoSerializer(ModelSerializer):
             return STATUS_APROVADO
         return STATUS_EM_VALIDACAO
 
-
     def create(self, validated_data):
         revendedor = RevendedorSerializer.get_revendedor_by_cpf(self, validated_data)
         status = self.get_status_pedido(revendedor['cpf'])
-        print('STATUS.....................', status)
 
         pedido = {
             'numero': validated_data['numero'],
@@ -64,11 +81,30 @@ class PedidoSerializer(ModelSerializer):
             'status_id': status
         }
 
-        return Pedido.objects.create(**pedido)
+        try:
+            with transaction.atomic():
+                pedido = Pedido.objects.create(**pedido)
+                pedido_id = PedidoSerializer(pedido)
+                pedido_id = pedido_id.data
 
-        #  cashback_revendedor = validated_data.pop('enderecos')
-        # CashBackRevendedor.objects.create(revendedor, **cashback_revendedor)
-      
+                # cadastrar cashback do revendedor
+                cashback       = CashBackSerializer.get_cash_back(self, validated_data['valor'])
+                valor_cashback = validated_data['valor'] * (Decimal(cashback['percentual']) / 100)
+
+                cashback_revendedor = {
+                    'valor': valor_cashback,
+                    'data': validated_data['data'],
+                    'pedido_id': pedido_id['id'],
+                    'revendedor_id': revendedor['id'],
+                    'perc_cashback': cashback['percentual']
+
+                }
+                CashBackRevendedor.objects.create(**cashback_revendedor)
+            return pedido
+        except TypeError:
+            raise ValidationError('Ocorreu algum problema ao cadastrar o novo pedido. Tente novamente mais tarde.', code=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            raise IntegrityError('Não foi possível cadastrar o pedido. Por favor, verifique os parâmetros e tente novamente mais tarde.')
 
 
 class CashBackRevendedorSerializer(ModelSerializer):
