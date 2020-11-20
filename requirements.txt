@@ -1,2 +1,3 @@
 django-cpf
 django-print-sql
+djangorestframework-jwt

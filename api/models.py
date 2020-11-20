@@ -77,12 +77,12 @@ class PedidoQuerySet(models.QuerySet):
             result_list = cursor.fetchall()
         return result_list
 
-class PedidoManager(models.Manager):
-    def get_queryset(self):
-        return PedidoQuerySet(self.model, using=self._db)
+# class PedidoManager(models.Manager):
+#     def get_queryset(self):
+#         return PedidoQuerySet(self.model, using=self._db)
 
-    def listar_pedidos(self):
-        return self.get_queryset().listar_pedidos()
+#     def listar_pedidos(self):
+#         return self.get_queryset().listar_pedidos()
 
 
 class Pedido(models.Model):
@@ -92,8 +92,8 @@ class Pedido(models.Model):
         db_table = 'pedido'
         ordering = ['data']   
     
-    # objects       = models.Manager()
-    # objects       = PedidoManager()
+    objects       = models.Manager()
+    pedidos       = PedidoQuerySet.as_manager()
 
     numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
     revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
