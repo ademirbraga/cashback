@@ -1,5 +1,5 @@
 """
-WSGI config for cashback project.
+WSGI config for cashbackconfig project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

@@ -1,3 +1,11 @@
 django-cpf
 django-print-sql
+djangorestframework
+markdown
 djangorestframework-jwt
+django-filter
+coverage
+lxml
+defusedxml
+django-nose
+nose-exclude
