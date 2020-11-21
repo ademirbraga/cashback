@@ -76,15 +76,16 @@ class PedidoSerializer(ModelSerializer):
                     'perc_cashback': cashback['percentual']
 
                 }
+
                 logger.info('Registrando cashbackconfig do revendedor {} para o pedido {}'.format(revendedor['nome'], validated_data['numero']))
                 CashBackRevendedor.objects.create(**cashback_revendedor)
-
+                logger.info('Pedido registrado com sucesso.')
             return pedido
         except TypeError as err:
             logger.exception('Unexpected error: {0}'.format(err))
             raise ValidationError('Ocorreu algum problema ao cadastrar o novo pedido. Tente novamente mais tarde.', code=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError:
-            raise IntegrityError('Não foi possível cadastrar o pedido. Por favor, verifique os parâmetros e tente novamente mais tarde.')
+        except IntegrityError as err:
+            raise IntegrityError('Não foi possível cadastrar o pedido. Por favor, verifique os parâmetros e tente novamente mais tarde.', err)
         except:
             logger.exception("Unexpected error: {0}".format(sys.exc_info()[0]))
             raise

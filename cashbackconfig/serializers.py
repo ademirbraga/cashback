@@ -1,7 +1,7 @@
 
 # coding=utf8
 from django_print_sql import print_sql_decorator
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import CashBack
 
 class CashBackSerializer(ModelSerializer):
