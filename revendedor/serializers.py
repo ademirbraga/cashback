@@ -18,7 +18,9 @@ class RevendedorSerializer(ModelSerializer):
         if validated_data['senha']:
             validated_data['senha'] = make_password(validated_data['senha'], salt=SALT)
         
-        return Revendedor.objects.create(**validated_data)
+        result = Revendedor.objects.create(**validated_data)
+        logger.info('Cadastro de revendedor realizado com sucesso.')
+        return result
 
 
     def get_revendedor_by_cpf(self, data):

@@ -20,19 +20,19 @@ class UserFactory(factory.django.DjangoModelFactory):
 class TestRevendedor(unittest.TestCase):
     def setUp(self):
         self.attributes = {
-            'nome': 'Joao Silva',
-            'cpf': '24795044090',
-            'email': 'joao@silva.com',
+            'nome': 'Maria Silva',
+            'cpf': '30999851047',
+            'email': 'maria@silva.com',
             'senha': '123456'
         }
 
         self.serializer_data = {
-            'nome': 'Joao Silva',
-            'cpf': '24795044090',
-            'email': 'joao@silva.com',
+            'nome': 'Maria Silva',
+            'cpf': '30999851047',
+            'email': 'maria@silva.com',
             'senha': '123456'
         }
-        revendedor1 = Revendedor.objects.filter(cpf='24795044090')
+        revendedor1 = Revendedor.objects.filter(cpf=self.attributes.get('cpf'))
         if revendedor1:
             revendedor1[0].delete()
         self.revendedor = Revendedor.objects.create(**self.attributes)

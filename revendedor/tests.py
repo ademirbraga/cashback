@@ -9,6 +9,9 @@ from rest_framework.test import APIRequestFactory
 from .views import RevendedorViewSet
 import factory
 
+import logging
+logger = logging.getLogger(__name__)
+
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
@@ -31,7 +34,7 @@ class TestRevendedor(unittest.TestCase):
             'email': 'joao@silva.com',
             'senha': '123456'
         }
-        revendedor1 = Revendedor.objects.filter(cpf='24795044090')
+        revendedor1 = Revendedor.objects.filter(cpf=self.attributes.get('cpf'))
         if revendedor1:
             revendedor1[0].delete()
         self.revendedor = Revendedor.objects.create(**self.attributes)
@@ -62,17 +65,18 @@ class TestRevendedor(unittest.TestCase):
 
 
     def test_salvar_revendedor(self):
+        logger.info('Teste para salvar revendedor......')
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
         view = RevendedorViewSet.as_view({'post': 'create'})
 
         revendedor = {
-            'nome': 'Maria Silva',
-            'cpf': '26621630034',
-            'email': 'maria@silva.com',
+            'nome': 'Antonio Silva',
+            'cpf': '56972140064',
+            'email': 'antonio@silva.com',
             'senha': '123456'
         }
-
+        logger.info('Chamando API cadastrar revendedor......')
         request = factory.post('/revendedor/', revendedor)
         force_authenticate(request, user=user)
         response = view(request)
