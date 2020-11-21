@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django_print_sql import print_sql_decorator
 import logging
 from .models import Pedido
-from .serializers import PedidoSerializer, PedidoV2Serializer
+from .serializers import PedidoSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,4 @@ class PedidoViewSet(viewsets.ModelViewSet):
     @print_sql_decorator(count_only=False) 
     def listar_pedidos(self, request, *args, **kwargs):
         pedidos = Pedido.pedidos.listar_pedidos()
-        serializer = PedidoV2Serializer(pedidos)
-        return Response(serializer.data)
-
+        return Response(pedidos)

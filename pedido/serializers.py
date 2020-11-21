@@ -27,35 +27,6 @@ class ValorCashBackField(RelatedField):
     def to_native(self, value):
         return value.valor_cashback        
 
-# p.numero,
-# p.valor,
-# p."data",
-# cr.perc_cashback,
-# cr.valor as valor_cashback,
-# sp.status
-
-class PedidoV2Serializer(ModelSerializer):
-    numero = SerializerMethodField()
-
-    def get_numero(self, instance):
-        print('**********************\n')
-        print(instance)
-        print('**********************\n')
-        return instance.numero
-
-    # numero = CharField()
-    # status = StatusField(many=False, read_only=True)
-    perc_cashback = PercentualCashBackField(many=False, read_only=True)
-    # valor_cashback = ValorCashBackField(many=False, read_only=True)
-    # revendedor = CharField(source='revendedor.cpf')
-    # data       = DateTimeField(format='%Y-%m-%dT%H:%M:%S')
-    # valor      = DecimalField(max_digits=10, decimal_places=2)
-    class Meta:
-        model  = Pedido
-        fields = ['numero', 'perc_cashback']
-        #, 'perc_cashback', 'valor_cashback', 'status']
-
-
 class PedidoSerializer(ModelSerializer):
     revendedor = CharField(source='revendedor.cpf')
     data       = DateTimeField(format='%Y-%m-%dT%H:%M:%S')

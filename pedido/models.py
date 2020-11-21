@@ -7,6 +7,14 @@ from cashback.settings import STATUS_EM_VALIDACAO
 
 
 class PedidoQuerySet(models.QuerySet):
+    def dictfetchall(self, cursor):
+        "Returns all rows from a cursor as a dict"
+        desc = cursor.description
+        return [
+            dict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()
+        ]
+
     def listar_pedidos(self):
         from django.db import connection
         with connection.cursor() as cursor:
@@ -23,15 +31,15 @@ class PedidoQuerySet(models.QuerySet):
                     inner join cashback_revendedor cr on cr.pedido_id = p.id
                     inner join status_pedido sp on sp.id = p.status_id
                 """)
-            result_list = cursor.fetchall()
+            result_list = self.dictfetchall(cursor)
         return result_list
 
-# class PedidoManager(models.Manager):
-#     def get_queryset(self):
-#         return PedidoQuerySet(self.model, using=self._db)
+class PedidoManager(models.Manager):
+    def get_queryset(self):
+        return PedidoQuerySet(self.model, using=self._db)
 
-#     def listar_pedidos(self):
-#         return self.get_queryset().listar_pedidos()
+    def listar_pedidos(self):
+        return self.get_queryset().listar_pedidos()
 
 
 class Pedido(models.Model):
@@ -42,7 +50,7 @@ class Pedido(models.Model):
         ordering = ['data']   
     
     objects       = models.Manager()
-    pedidos       = PedidoQuerySet.as_manager()
+    pedidos       = PedidoManager() #PedidoQuerySet.as_manager()
 
     numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
     revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)

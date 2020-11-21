@@ -44,12 +44,30 @@ class TestStringMethods(unittest.TestCase):
         user = User.objects.get(username='jacob')
         view = RevendedorViewSet.as_view({'get': 'list'})
 
-        request = factory.get('/revendedor/')
+        request = factory.get('/revendedor/', HTTP_AUTHORIZATION='Token {}'.format(self.token))
         force_authenticate(request, user=user)
         response = view(request)
 
         self.assertEqual(response.status_code, 200)
 
+
+
+    def test_salvar_revendedor(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='jacob')
+        view = RevendedorViewSet.as_view({'get': 'create'})
+
+        revendedor = {
+            'nome': 'Maria Silva',
+            'cpf': '26621630034',
+            'email': 'maria@silva.com',
+            'senha': '123456'
+        }
+
+        request = factory.post('/revendedor/', revendedor, HTTP_AUTHORIZATION='Token {}'.format(self.token))
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, 200)
 
 
 
