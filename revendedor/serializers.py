@@ -1,8 +1,8 @@
 # coding=utf8
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import Revendedor
 from django.contrib.auth.hashers import make_password
-from settings import SALT
+from cashback.settings import SALT
 
 import logging
 logger = logging.getLogger(__name__)

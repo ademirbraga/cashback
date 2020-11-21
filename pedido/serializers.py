@@ -1,13 +1,14 @@
 # coding=utf8
 from decimal import Decimal
 from django.db import IntegrityError, transaction
-from rest_framework.serializers import ModelSerializer, RelatedField, SerializerMethodField, CharField, DateTimeField, DecimalField, ValidationError
+from rest_framework.serializers import ModelSerializer, RelatedField,\
+    SerializerMethodField, CharField, DateTimeField, DecimalField, ValidationError
 from cashbackrevendedor.models import CashBackRevendedor
 from whitelistpedido.models import WhiteListPedido
 from revendedor.serializers import RevendedorSerializer
 from cashbackconfig.serializers import CashBackSerializer
 from .models import Pedido
-from settings import STATUS_EM_VALIDACAO, STATUS_APROVADO
+from cashback.settings import STATUS_EM_VALIDACAO, STATUS_APROVADO
 import sys
 
 import logging

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'cpf_field',
     'rest_framework',
     'revendedor',
@@ -59,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'cashback.urls'
 
 TEMPLATES = [
     {
@@ -118,7 +119,7 @@ LOGGING = {
     }
 }
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'cashback.wsgi.application'
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # NOSE_ARGS = [

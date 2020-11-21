@@ -1,12 +1,11 @@
 # coding=utf8
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 import json, requests
 from .serializers import CashBackRevendedorSerializer
 from .models import CashBackRevendedor
-from settings import CASHBACK_RETRIEVE_URL, CASHBACK_RETRIEVE_TOKEN
+from cashback.settings import CASHBACK_RETRIEVE_URL, CASHBACK_RETRIEVE_TOKEN
 
 import logging
 logger = logging.getLogger(__name__)

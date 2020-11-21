@@ -3,7 +3,7 @@ from django.db import models
 
 from revendedor.models import Revendedor
 from statuspedido.models import Status
-from settings import STATUS_EM_VALIDACAO
+from cashback.settings import STATUS_EM_VALIDACAO
 
 
 class PedidoQuerySet(models.QuerySet):

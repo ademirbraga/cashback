@@ -19,4 +19,4 @@ class Revendedor(models.Model):
         return self.nome
 
     def __unicode__(self):
-        return u'%s' % (self.nome)
+        return u'%s' % self.nome

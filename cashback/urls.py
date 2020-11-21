@@ -26,7 +26,7 @@ from cashbackrevendedor.views import CashBackRevendedorViewSet
 
 router = routers.DefaultRouter()
 
-router.register(r'cadastrar-revendedor', RevendedorViewSet)
+router.register(r'revendedor', RevendedorViewSet)
 router.register(r'cadastrar-pedido', PedidoViewSet)
 router.register(r'cashbackconfig-revendedor', CashBackRevendedorViewSet)
 router.register(r'white-list', WhiteListPedidoViewSet)
