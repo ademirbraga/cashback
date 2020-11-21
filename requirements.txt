@@ -9,3 +9,4 @@ lxml
 defusedxml
 django-nose
 nose-exclude
+factory_boy

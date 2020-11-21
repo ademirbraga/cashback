@@ -1,20 +1,22 @@
-from django.test import TestCase
 from .models import Revendedor
 from .serializers import RevendedorSerializer
 import unittest
-
 from django.contrib.auth.models import User
 from django.test import RequestFactory
-
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient
-
 from rest_framework.test import APITestCase, force_authenticate
 from rest_framework.test import APIRequestFactory
 
 from .views import RevendedorViewSet
+import factory
 
-class TestStringMethods(unittest.TestCase):
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = 'jacob'
+    email = 'jacob@example.com'
+
+class TestRevendedor(unittest.TestCase):
     def setUp(self):
         self.attributes = {
             'nome': 'Joao Silva',
@@ -36,15 +38,22 @@ class TestStringMethods(unittest.TestCase):
         self.serializer = RevendedorSerializer(instance=self.revendedor)
 
         self.factory = RequestFactory()
-        self.user = User.objects.create_user(
-            username='jacob', email='jacob@gmail.com', password='top_secret')
+
+        try:
+            self.user = User.objects.get(username='jacob')
+        except:
+            self.user = UserFactory.create()
+            self.user.set_password('secret')
+            self.user.save()
+
+
 
     def test_get_revendedores(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
         view = RevendedorViewSet.as_view({'get': 'list'})
 
-        request = factory.get('/revendedor/', HTTP_AUTHORIZATION='Token {}'.format(self.token))
+        request = factory.get('/revendedor/')
         force_authenticate(request, user=user)
         response = view(request)
 
@@ -55,7 +64,7 @@ class TestStringMethods(unittest.TestCase):
     def test_salvar_revendedor(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
-        view = RevendedorViewSet.as_view({'get': 'create'})
+        view = RevendedorViewSet.as_view({'post': 'create'})
 
         revendedor = {
             'nome': 'Maria Silva',
@@ -64,10 +73,10 @@ class TestStringMethods(unittest.TestCase):
             'senha': '123456'
         }
 
-        request = factory.post('/revendedor/', revendedor, HTTP_AUTHORIZATION='Token {}'.format(self.token))
+        request = factory.post('/revendedor/', revendedor)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
 
 
