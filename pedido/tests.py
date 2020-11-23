@@ -1,5 +1,4 @@
 from .models import Revendedor
-from .serializers import RevendedorSerializer
 import unittest
 from django.contrib.auth.models import User
 from django.test import RequestFactory
@@ -7,8 +6,12 @@ from rest_framework.test import APITestCase, force_authenticate
 from rest_framework.test import APIRequestFactory
 
 from .views import PedidoViewSet
+from .serializers import PedidoSerializer
+from cashbackrevendedor.models import CashBackRevendedor
+from cashbackrevendedor.serializers import CashBackRevendedorSerializer
 from cashbackconfig.models import CashBack
 from statuspedido.models import Status
+from .models import Pedido
 import factory
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -17,7 +20,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = 'jacob'
     email = 'jacob@example.com'
 
-class TestRevendedor(unittest.TestCase):
+class TestPedido(unittest.TestCase):
     def setUp(self):
         self.attributes = {
             'nome': 'Maria Silva',
@@ -25,18 +28,6 @@ class TestRevendedor(unittest.TestCase):
             'email': 'maria@silva.com',
             'senha': '123456'
         }
-
-        self.serializer_data = {
-            'nome': 'Maria Silva',
-            'cpf': '30999851047',
-            'email': 'maria@silva.com',
-            'senha': '123456'
-        }
-        revendedor1 = Revendedor.objects.filter(cpf=self.attributes.get('cpf'))
-        if revendedor1:
-            revendedor1[0].delete()
-        self.revendedor = Revendedor.objects.create(**self.attributes)
-        self.serializer = RevendedorSerializer(instance=self.revendedor)
 
         self.factory = RequestFactory()
 
@@ -60,9 +51,10 @@ class TestRevendedor(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-
-
     def test_salvar_pedido(self):
+        #cadastrar revendedor
+        self.revendedor = Revendedor.objects.create(**self.attributes)
+
 
         # cadastrar as configs de cashback
         cashback = {
@@ -89,6 +81,43 @@ class TestRevendedor(unittest.TestCase):
         user = User.objects.get(username='jacob')
         view = PedidoViewSet.as_view({'post': 'create'})
 
+        nro_pedido = 'xpto001'
+        valor = 1100.45
+        pedido = {
+            "numero": nro_pedido,
+            "revendedor": self.attributes.get('cpf'),
+            "valor": valor,
+            "data": "2020-11-18 10:00:00"
+        }
+
+        request = factory.post('/cadastrar-pedido/', pedido)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, 201)
+        nro_pedido
+
+        pedido = Pedido.objects.get(numero=nro_pedido)
+        pedido = PedidoSerializer(pedido)
+        pedido = pedido.data
+        self.assertEquals(pedido['numero'], nro_pedido)
+        self.assertEquals(str(pedido['valor']), str(valor))
+
+        cashback_revendedor = CashBackRevendedor.objects.get(pedido_id=pedido['id'])
+        cashback_revendedor = CashBackRevendedorSerializer(cashback_revendedor)
+        cashback_revendedor = cashback_revendedor.data
+        self.assertIsNotNone(cashback_revendedor)
+
+
+    def test_salvar_pedido_sem_status_casdastrado(self):
+        # remover config de cashback cadastrados anteriormente
+        st1 = CashBack.objects.filter(id=1)
+        if st1:
+            st1[0].delete()
+
+        factory = APIRequestFactory()
+        user = User.objects.get(username='jacob')
+        view = PedidoViewSet.as_view({'post': 'create'})
+
         pedido = {
             "numero": "xpto001",
             "revendedor": self.attributes.get('cpf'),
@@ -99,8 +128,7 @@ class TestRevendedor(unittest.TestCase):
         request = factory.post('/cadastrar-pedido/', pedido)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, 201)
-
+        self.assertEqual(response.status_code, 400)
 
 
 if __name__ == '__main__':

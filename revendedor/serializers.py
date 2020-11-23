@@ -17,7 +17,7 @@ class RevendedorSerializer(ModelSerializer):
         logger.info('Criacao de novo revendedor: {}'.format(validated_data['nome']))
         if validated_data['senha']:
             validated_data['senha'] = make_password(validated_data['senha'], salt=SALT)
-        
+
         result = Revendedor.objects.create(**validated_data)
         logger.info('Cadastro de revendedor realizado com sucesso.')
         return result
