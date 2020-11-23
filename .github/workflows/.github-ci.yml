@@ -6,15 +6,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DJANGO_SETTINGS_MODULE: app_name.settings.dev
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      PORT: 8000
-      PG_DB: ${{ secrets.PG_DB }}
-      PG_PASS: ${{ secrets.PG_PASS }}
-      PG_USER: ${{ secrets.USER }}
-
     strategy:
       matrix:
         python-version: [3.6]
