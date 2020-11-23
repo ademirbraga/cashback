@@ -34,7 +34,8 @@ jobs:
       run: docker ps -a
     - name: Running docker container
       run: |
-        docker exec -it $(docker ps -aqf "name=cashback_web") bash
+        docker ps -aqf "name=cashback_web_1"
+        docker exec -it $(docker ps -aqf "name=cashback_web_1") bash
     - name: Running database initial scripts
       run: |
         ./docker-entrypoint.sh --environment=dev
