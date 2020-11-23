@@ -33,10 +33,6 @@ jobs:
     - name: Check running containers
       run: docker ps -a
 
-  migrate:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -47,19 +43,23 @@ jobs:
     - name: Running database initial scripts
       run: |
         ./docker-entrypoint.sh --environment=dev
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Testing
       run: |
         mkdir /tmp/cashback
         echo 'teste' > /tmp/cashback/debug.log
         python3 manage.py test
-    - name: Deploy
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: TESTE
+        TWINE_PASSWORD: TESTE
       run: |
-        pip3 install setuptools wheel twine
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
