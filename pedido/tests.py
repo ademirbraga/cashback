@@ -14,11 +14,14 @@ from statuspedido.models import Status
 from .models import Pedido
 import factory
 
+
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
+
     username = 'jacob'
     email = 'jacob@example.com'
+
 
 class TestPedido(unittest.TestCase):
     def setUp(self):
@@ -38,8 +41,6 @@ class TestPedido(unittest.TestCase):
             self.user.set_password('secret')
             self.user.save()
 
-
-
     def test_get_pedidos(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
@@ -52,9 +53,8 @@ class TestPedido(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_salvar_pedido(self):
-        #cadastrar revendedor
+        # cadastrar revendedor
         self.revendedor = Revendedor.objects.create(**self.attributes)
-
 
         # cadastrar as configs de cashback
         cashback = {
@@ -75,7 +75,6 @@ class TestPedido(unittest.TestCase):
         }
         Status.objects.create(**st1)
         Status.objects.create(**st2)
-
 
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
@@ -106,7 +105,6 @@ class TestPedido(unittest.TestCase):
         cashback_revendedor = CashBackRevendedorSerializer(cashback_revendedor)
         cashback_revendedor = cashback_revendedor.data
         self.assertIsNotNone(cashback_revendedor)
-
 
     def test_salvar_pedido_sem_status_casdastrado(self):
         # remover config de cashback cadastrados anteriormente

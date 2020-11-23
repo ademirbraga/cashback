@@ -16,6 +16,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = 'jacob'
     email = 'jacob@example.com'
 
+
 class TestRevendedor(unittest.TestCase):
     def setUp(self):
         self.attributes = {
@@ -46,8 +47,6 @@ class TestRevendedor(unittest.TestCase):
             self.user.set_password('secret')
             self.user.save()
 
-
-
     def test_get_revendedores(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
@@ -58,8 +57,6 @@ class TestRevendedor(unittest.TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 200)
-
-
 
     def test_salvar_revendedor(self):
         factory = APIRequestFactory()
@@ -77,8 +74,6 @@ class TestRevendedor(unittest.TestCase):
         response = view(request)
         self.assertEqual(response.status_code, 201)
 
-
-
     def test_salvar_revendedor_cpf_vazio(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
@@ -95,7 +90,6 @@ class TestRevendedor(unittest.TestCase):
         response = view(request)
         self.assertEqual(response.status_code, 400)
 
-
     def test_salvar_revendedor_ja_existente(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='jacob')
@@ -111,7 +105,6 @@ class TestRevendedor(unittest.TestCase):
         force_authenticate(request, user=user)
         response = view(request)
         self.assertEqual(response.status_code, 400)
-
 
     def test_integracao_salvar_revendedor(self):
         factory = APIRequestFactory()
@@ -134,9 +127,6 @@ class TestRevendedor(unittest.TestCase):
         revendedor = revendedor.data
 
         self.assertEquals(revendedor['cpf'], cpf)
-
-
-
 
 
 if __name__ == '__main__':

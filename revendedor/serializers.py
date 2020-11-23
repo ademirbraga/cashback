@@ -5,12 +5,14 @@ from django.contrib.auth.hashers import make_password
 from cashback.settings import SALT
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class RevendedorSerializer(ModelSerializer):
     class Meta:
-        model        = Revendedor
-        fields       = ('id', 'nome', 'cpf', 'email', 'senha')
+        model = Revendedor
+        fields = ('id', 'nome', 'cpf', 'email', 'senha')
         extra_kwargs = {'senha': {'write_only': True}}
 
     def create(self, validated_data):
@@ -21,7 +23,6 @@ class RevendedorSerializer(ModelSerializer):
         result = Revendedor.objects.create(**validated_data)
         logger.info('Cadastro de revendedor realizado com sucesso.')
         return result
-
 
     def get_revendedor_by_cpf(self, data):
         try:

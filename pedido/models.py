@@ -34,6 +34,7 @@ class PedidoQuerySet(models.QuerySet):
             result_list = self.dictfetchall(cursor)
         return result_list
 
+
 class PedidoManager(models.Manager):
     def get_queryset(self):
         return PedidoQuerySet(self.model, using=self._db)
@@ -47,19 +48,21 @@ class Pedido(models.Model):
         verbose_name = u'Pedido'
         verbose_name_plural = u'Pedidos'
         db_table = 'pedido'
-        ordering = ['data']   
-    
-    objects       = models.Manager()
-    pedidos       = PedidoManager() #PedidoQuerySet.as_manager()
+        ordering = ['data']
 
-    numero        = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
-    revendedor    = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    status        = models.ForeignKey(Status, verbose_name=u'Status', default=STATUS_EM_VALIDACAO, related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
-    valor         = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor', null=False, blank=False)
-    data          = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=False, blank=False, auto_now_add=False)
+    objects = models.Manager()
+    pedidos = PedidoManager()  # PedidoQuerySet.as_manager()
+
+    numero = models.CharField(max_length=60, verbose_name=u'Número', unique=True)
+    revendedor = models.ForeignKey(Revendedor, verbose_name=u'Revendedor', related_name='revendedor_pedido', null=False,
+                                   blank=False, on_delete=models.RESTRICT)
+    status = models.ForeignKey(Status, verbose_name=u'Status', default=STATUS_EM_VALIDACAO,
+                               related_name='status_pedido', null=False, blank=False, on_delete=models.RESTRICT)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Valor', null=False, blank=False)
+    data = models.DateTimeField(verbose_name=u'Data/Hora Pedido', null=False, blank=False, auto_now_add=False)
 
     def __str__(self):
-        return self.numero        
-    
+        return self.numero
+
     def __unicode__(self):
         return u'%s' % (self.numero)

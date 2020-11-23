@@ -56,6 +56,8 @@ List of all tecnologies and frameworks used in development of this project:
 * [Django-rest-framework](https://www.django-rest-framework.org) - Django Rest Framework
 * [Postgresql](https://www.postgresql.org) - Relational Database
 * [pip](https://pypi.org/project/pip/) - Python Package Manager
+* [Docker Compose](https://docs.docker.com/compose/) - Setup environment for development
+* [Docker](https://www.docker.com/) - Container service
 
 
 
