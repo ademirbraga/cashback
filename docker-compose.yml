@@ -5,7 +5,7 @@ services:
     image: postgres
     container_name: cashback_db
     env_file:
-      - .env
+      - cashback/.env
     environment:
       - POSTGRES_DB=billing-3p-db
       - POSTGRES_USER=root
@@ -28,7 +28,7 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - cashback/.env
     expose:
       - "8000"
     restart: always

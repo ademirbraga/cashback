@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -33,12 +32,25 @@ jobs:
         docker-compose up -d
     - name: Check running containers
       run: docker ps -a
+
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    with:
+      python-version: '3.x'
     - name: Running docker container
       run: |
         docker exec -it $(docker ps -aqf "name=cashback_web") bash
     - name: Running database initial scripts
       run: |
         ./docker-entrypoint.sh --environment=dev
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    with:
+      python-version: '3.x'
     - name: Testing
       run: |
         mkdir /tmp/cashback
