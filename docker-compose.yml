@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
     expose:
-      - ${POSTGRES_PORT}
+      - 5432
     stdin_open: true
     volumes:
       - /var/lib/postgresql
