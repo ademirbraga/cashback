@@ -30,6 +30,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Testing
       run: |
+        mkdir /tmp/cashback
+        echo 'teste' > /tmp/cashback/debug.log
         python3 manage.py test
     - name: Deploy
       run: |
