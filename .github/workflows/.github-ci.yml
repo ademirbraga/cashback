@@ -6,6 +6,15 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DJANGO_SETTINGS_MODULE: app_name.settings.dev
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      PORT: 8000
+      PG_DB: ${{ secrets.PG_DB }}
+      PG_PASS: ${{ secrets.PG_PASS }}
+      PG_USER: ${{ secrets.USER }}
+
     strategy:
       matrix:
         python-version: [3.6]
@@ -28,6 +37,17 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Build the docker-compose stack
+      run: |
+        - docker-compose up -d
+    - name: Check running containers
+      run: docker ps -a
+    - name: Running docker container
+      run: |
+         docker exec -it $(docker ps -aqf "name=cashback_web") bash
+    - name: Running database initial scripts
+      run: |
+        ./docker-entrypoint.sh --environment=dev
     - name: Testing
       run: |
         mkdir /tmp/cashback
