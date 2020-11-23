@@ -1,12 +1,11 @@
 import unittest
 from django.contrib.auth.models import User
 from django.test import RequestFactory
-from rest_framework.test import APITestCase, force_authenticate
+from rest_framework.test import force_authenticate
 from rest_framework.test import APIRequestFactory
 
 from .views import CashBackRevendedorViewSet
 import factory
-from unittest.mock import Mock, patch
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:

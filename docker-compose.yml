@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  db:
+    image: postgres
+    container_name: cashback_db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=billing-3p-db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    expose:
+      - ${POSTGRES_PORT}
+    stdin_open: true
+    volumes:
+      - /var/lib/postgresql
+      - /var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime
+      - /etc/Timezone:/etc/Timezone:ro
+    tty: true
+    ports:
+      - 5432:5432
+    networks:
+      - postgres-compose-network
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    restart: always
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      - postgres-compose-network
+networks:
+  postgres-compose-network:
+    driver: bridge

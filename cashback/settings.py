@@ -26,7 +26,7 @@ SECRET_KEY = '!a_szxh0_3(fp%4swly50+t%0$lq$+^s$_*9qk%073la!15xu2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
+    'django_nose',
     'cpf_field',
     'rest_framework',
     'revendedor',
@@ -122,10 +123,10 @@ LOGGING = {
 WSGI_APPLICATION = 'cashback.wsgi.application'
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# NOSE_ARGS = [
-#     '--exclude-path = .. / * / admin',
-#     '--exclude-path = .. / * / models',
-# ]
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=cashbackrevendedor,pedido,revendedor',
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -136,7 +137,7 @@ DATABASES = {
         'NAME': 'billing-3p-db',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
+        'HOST': 'db',
         'PORT': '5432'
     },
     'test_database': {
