@@ -8,3 +8,5 @@ RUN cat /tmp/cashback/debug.log
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 COPY . /code/
+ENTRYPOINT []
+CMD ["/code/docker-entrypoint.sh"]

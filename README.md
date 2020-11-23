@@ -96,16 +96,27 @@ Access the project's root folder:
 **Install dependencies:**
 
 ```sh
-pip3 install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 
 **Run project:**
 
 ```sh
- python3 manage.py runserver
+$ python3 manage.py runserver
+```
+**Run project using docker:**
+
+```sh
+$ docker-compose up -d
+$ docker exec -it $( docker ps -aqf "name=cashback_web") bash
+$ ./docker-entrypoint.sh --environment=dev # to run initial database migrations and create super user
 ```
 
+**Down project:**
 
+```sh
+$ docker-compose down -v
+```
 ## Logging
 Django uses Python’s builtin logging module to perform system logging. [django-logging](https://docs.djangoproject.com/en/3.1/topics/logging/)
 
