@@ -44,5 +44,16 @@ class TestCashBackRevendedor(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+    def test_get_cashback_acumulado_erro_404(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='jacob')
+        view = CashBackRevendedorViewSet.as_view({'get': 'cashback_acumulado'})
+
+        request = factory.get('/cashback-acumulado/')
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, 404)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,9 @@ class CashBackRevendedorViewSet(viewsets.ModelViewSet):
             'token': CASHBACK_RETRIEVE_TOKEN
         }
 
+        if 'cpf' not in kwargs:
+            return Response({"error": "Favor informar um CPF válido."}, status=status.HTTP_404_NOT_FOUND)
+
         url = '{}?cpf={}'.format(CASHBACK_RETRIEVE_URL, kwargs['cpf'])
         response = requests.get(url, headers=headers)
         logger.info(response)
