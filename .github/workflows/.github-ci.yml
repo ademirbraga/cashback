@@ -32,11 +32,6 @@ jobs:
         docker-compose up -d
     - name: Check running containers
       run: docker ps -a
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Running docker container
       run: |
         docker exec -it $(docker ps -aqf "name=cashback_web") bash
