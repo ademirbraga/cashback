@@ -10,7 +10,8 @@
 * [Migration](#migration)
 * [Environment](#environment)
 * [Install & Run](#install)
-* [Logginh](#logging)
+* [Logging](#logging)
+* [Authentication](#authentication)
 
 
 ### Project Structure
@@ -112,6 +113,20 @@ $ docker exec -it $( docker ps -aqf "name=cashback_web") bash
 $ ./docker-entrypoint.sh --environment=dev # to run initial database migrations and create super user
 ```
 
+**Authentication**
+REST framework provides a number of authentication schemes out of the box, and also allows you to implement custom schemes.
+[Django-Authentication](https://www.django-rest-framework.org/api-guide/authentication/)
+To use Authentication in this project within Postman:
+```
+User: admin
+Pass: adminpass
+```
+Or generate token and set request header like this:
+```
+'Authorization': "Basic YWRtaW46YWRtaW5wYXNz"
+``` 
+
+
 **Down project:**
 
 ```sh
@@ -127,3 +142,4 @@ Django uses Python’s builtin logging module to perform system logging. [django
 ## License
 
 ...
+)
