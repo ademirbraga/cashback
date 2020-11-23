@@ -37,8 +37,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    with:
-      python-version: '3.x'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Running docker container
       run: |
         docker exec -it $(docker ps -aqf "name=cashback_web") bash
@@ -49,8 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    with:
-      python-version: '3.x'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Testing
       run: |
         mkdir /tmp/cashback
