@@ -38,11 +38,11 @@ jobs:
         docker exec -i $(docker ps | grep cashback_web | awk '{print $1}') bash
     - name: Running database initial scripts
       run: |
+        mkdir /tmp/cashback
+        echo 'teste' > /tmp/cashback/debug.log
         ./docker-entrypoint.sh --environment=dev
     - name: Testing
       run: |
-        mkdir /tmp/cashback
-        echo 'teste' > /tmp/cashback/debug.log
         python3 manage.py test
   deploy:
     runs-on: ubuntu-latest
