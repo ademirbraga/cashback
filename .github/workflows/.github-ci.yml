@@ -41,10 +41,16 @@ jobs:
         mkdir /tmp/cashback
         echo 'teste' > /tmp/cashback/debug.log
         ./docker-entrypoint.sh --environment=dev
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
     - name: Testing
       run: |
         python3 manage.py test
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
