@@ -137,7 +137,7 @@ DATABASES = {
         'NAME': 'billing-3p-db',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '5432'
     },
     'test_database': {
