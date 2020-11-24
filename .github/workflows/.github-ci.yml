@@ -53,9 +53,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Build and publish
-      env:
-        TWINE_USERNAME: TESTE
-        TWINE_PASSWORD: TESTE
+#      env:
+#        TWINE_USERNAME: TESTE
+#        TWINE_PASSWORD: TESTE
       run: |
-        python setup.py sdist bdist_wheel
-        twine upload dist/*
+        echo 'O DEPLOY NAO SERA REALIZADO, POIS NAO FOI CRIADO UM LOCAL AINDA.'
+#        python setup.py sdist bdist_wheel
+#        twine upload dist/*
